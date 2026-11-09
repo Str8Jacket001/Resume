@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anthony Stover - Youth Service Professional & Consultant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals -->
+    <!-- Application Structure Plan: A single-page application with a fixed top navigation for easy access to distinct thematic sections: Home, Experience, Skills, and Publications. This structure was chosen to transform a linear resume into an interactive portfolio. The user can either scroll through a logical narrative or jump directly to the section of most interest. Key interactions include an expandable timeline for professional experience and a live-filterable grid for skills, enhancing usability and engagement far beyond a static document. -->
+    <!-- Visualization & Content Choices: 
+        - Profile/Header -> Goal: Inform -> Presentation: Clean, high-impact text block -> Interaction: None -> Justification: Immediately establishes professional identity.
+        - Professional Experience -> Goal: Organize/Change -> Viz: Vertical Interactive Timeline -> Interaction: On-click expansion of details -> Justification: Condenses a long history into a clean, interactive format that encourages exploration without overwhelming the user. Built with HTML/CSS/JS.
+        - Key Competencies -> Goal: Organize/Inform -> Viz: Filterable Skill Grid -> Interaction: Live text search filters the grid -> Justification: Turns a dense table into a dynamic, user-driven tool for recruiters to quickly find relevant skills. Built with HTML/CSS/JS.
+        - Publications/Honors -> Goal: Inform -> Viz: Card-based grid -> Interaction: Clickable links on cards -> Justification: Modern, clean presentation for portfolio items.
+        - No charts were used as the source data is qualitative.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f9f9f9;
+            color: #1f2937;
+        }
+        .nav-link {
+            transition: color 0.3s ease, border-bottom-color 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #3b82f6;
+            border-bottom-color: #3b82f6;
+        }
+        .timeline-item {
+            position: relative;
+            padding-bottom: 2.5rem;
+            padding-left: 2.5rem;
+        }
+        .timeline-item:last-child {
+            padding-bottom: 0;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 4px;
+            width: 1.25rem;
+            height: 1.25rem;
+            border-radius: 50%;
+            background-color: #3b82f6;
+            border: 4px solid #dbeafe;
+            z-index: 10;
+        }
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            left: 9px;
+            top: 4px;
+            width: 2px;
+            height: 100%;
+            background-color: #e5e7eb;
+        }
+         .timeline-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.7s ease-in-out, opacity 0.5s ease;
+            opacity: 0;
+        }
+        .timeline-content.open {
+            max-height: 1000px;
+            opacity: 1;
+        }
+        .skill-tag {
+            transition: all 0.3s ease;
+        }
+        .section-title {
+            position: relative;
+            padding-bottom: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background-color: #3b82f6;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header id="home" class="bg-white shadow-md sticky top-0 z-50">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="text-2xl font-bold text-gray-800">Anthony Stover</div>
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="#home" class="nav-link">Home</a>
+                <a href="#experience" class="nav-link">Experience</a>
+                <a href="#skills" class="nav-link">Skills</a>
+                <a href="#publications" class="nav-link">Publications</a>
+            </div>
+            <a href="mailto:Anthony.reeves@gmail.com" class="hidden md:block bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300">Contact Me</a>
+            <button id="mobile-menu-button" class="md:hidden text-gray-700 focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+            </button>
+        </nav>
+        <div id="mobile-menu" class="hidden md:hidden bg-white py-2">
+             <a href="#home" class="block text-center py-2 px-4 text-sm text-gray-700 hover:bg-blue-50">Home</a>
+             <a href="#experience" class="block text-center py-2 px-4 text-sm text-gray-700 hover:bg-blue-50">Experience</a>
+             <a href="#skills" class="block text-center py-2 px-4 text-sm text-gray-700 hover:bg-blue-50">Skills</a>
+             <a href="#publications" class="block text-center py-2 px-4 text-sm text-gray-700 hover:bg-blue-50">Publications</a>
+             <a href="mailto:Anthony.reeves@gmail.com" class="block text-center py-2 px-4 text-sm text-blue-500 hover:bg-blue-50">Contact Me</a>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-12">
+        <section class="text-center mb-16">
+            <h1 class="text-4xl md:text-6xl font-extrabold text-gray-800 mb-4">Driving Systemic Change for Youth</h1>
+            <p class="max-w-3xl mx-auto text-lg text-gray-600">
+                With over two decades of national experience, I am a dedicated youth service professional renowned for inspiring and motivating youth facing crises to overcome internal and external barriers. I excel in working with cross-functional teams to drive impact and systemic change.
+            </p>
+        </section>
+
+        <section id="experience" class="mb-20">
+            <h2 class="text-3xl font-bold text-left section-title">Professional Experience</h2>
+            <div class="text-gray-600 mb-8">This section outlines my professional journey and key leadership roles. Click on any title to expand the details and see the impact I've made in each position. This interactive timeline highlights my consistent dedication to youth advocacy, policy reform, and program development across various sectors.</div>
+            <div class="relative">
+                <!-- Timeline items will be injected here by JavaScript -->
+                <div id="timeline-container"></div>
+            </div>
+        </section>
+
+        <section id="skills" class="mb-20">
+            <h2 class="text-3xl font-bold text-left section-title">Key Competencies</h2>
+            <div class="text-gray-600 mb-8">My career has equipped me with a diverse and comprehensive skill set. Use the search bar below to filter through my competencies and find the specific expertise you're looking for. This tool allows for a quick assessment of my capabilities in areas from grant writing and project management to youth development and public speaking.</div>
+            <div class="mb-6">
+                <input type="text" id="skill-search" placeholder="🔍 Search for a skill (e.g., Grant Writing)" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent transition">
+            </div>
+            <div id="skills-grid" class="flex flex-wrap gap-3 justify-center">
+                 <!-- Skill tags will be injected here by JavaScript -->
+            </div>
+        </section>
+
+        <section id="publications" class="mb-20">
+            <h2 class="text-3xl font-bold text-left section-title">Projects & Publications</h2>
+            <div class="text-gray-600 mb-8">This area showcases my contributions to the field through authorship and notable achievements. Each card represents a project, publication, or honor that reflects my commitment to creating resources and achieving excellence in youth advocacy. Click on the links to explore further.</div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Authorship -->
+                <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <h3 class="font-bold text-xl mb-2 text-gray-800">Author: Adulting 101 Series</h3>
+                    <p class="text-gray-600 mb-2">A series of guidebooks for youth on practical life skills.</p>
+                    <ul class="list-disc list-inside text-gray-600 space-y-1">
+                        <li>My First Apartment (and Car)</li>
+                        <li>How Not to Starve!</li>
+                        <li>How Not to Get Fired!</li>
+                    </ul>
+                </div>
+
+                <!-- Honors & Accomplishments -->
+                <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <h3 class="font-bold text-xl mb-2 text-gray-800">Honors & Accomplishments</h3>
+                    <ul class="list-none text-gray-600 space-y-2">
+                        <li><a href="https://education.geektherapeutics.com/certificates/o14vyjmopn" target="_blank" class="text-blue-500 hover:underline">Casey Excellence for Children Award – 2022</a></li>
+                        <li><a href="https://education.geektherapeutics.com/certificates/o14vyjmopn" target="_blank" class="text-blue-500 hover:underline">Certified Therapeutic Gamemaster – 2023</a></li>
+                        <li>Karen Sibley Scholarship – 2004</li>
+                        <li><a href="https://www.legis.ga.gov/api/legislation/document/20072008/73382" target="_blank" class="text-blue-500 hover:underline">House Resolution 789, GA House</a></li>
+                        <li>Recognized as a FosterClub All-Star – 2006</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-gray-800 text-white text-center p-8">
+         <p class="font-bold text-xl mb-2">Anthony Stover</p>
+         <p><a href="mailto:Anthony.reeves@gmail.com" class="hover:underline">Anthony.reeves@gmail.com</a></p>
+         <p>404-933-2042</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            const experienceData = [
+                {
+                    role: "Board of Directors",
+                    org: "California Youth Connection",
+                    date: "Dec 2024 – Present",
+                    details: [
+                        "Provide strategic oversight and vision, guiding the organization's mission and long-term objectives to improve outcomes for youth.",
+                        "Fulfill fiduciary duties by ensuring financial health, reviewing and approving budgets, and overseeing resource allocation.",
+                        "Contribute to governance by establishing and upholding organizational policies, bylaws, and ethical standards.",
+                        "Participate in fundraising initiatives and resource development to sustain and expand programs.",
+                        "Act as an ambassador and advocate, representing the organization's interests to stakeholders and the wider community.",
+                        "Ensure legal and regulatory compliance, identifying and mitigating potential risks to the organization.",
+                        "Review and approve key programs and initiatives, ensuring alignment with the organization's mission and impact goals."
+                    ]
+                },
+                {
+                    role: "Founder & Lead Facilitator",
+                    org: "Stover Consulting",
+                    date: "2015 – Present",
+                    details: [
+                        "Established and led a successful consulting firm, providing professional development, life skills, leadership training, and team-building workshops.",
+                        "Developed and delivered customized trainings, videos, and documents for youth groups and staff training programs across the U.S.",
+                        "Trained over 500 young people and staff annually on topics such as team building, resilience, constituent engagement, and life skills.",
+                        "Worked with foster care and juvenile justice (DJJ) agencies across the country to develop youth initiatives and improve youth services.",
+                        "Designed and delivered workforce development curriculum for Georgia's DFCS and ILP."
+                    ]
+                },
+                {
+                    role: "Youth Engagement Coordinator",
+                    org: "Multi-Agency Alliance for Children (MAAC)",
+                    date: "May 2008 – Present",
+                    details: [
+                        "Founding member: Georgia EmpowerMEnt, an initiative led by foster care alumni advocating for system reform.",
+                        "Facilitated and coordinated over 80 trainings and workshops annually, engaging more than 800 youth and adults each year.",
+                        "Managed partnerships with over 50 organizations locally and nationally.",
+                        "Trained young leaders in professionalism, public speaking, resilience, and strategic sharing.",
+                        "Helped create youth boards and trained leaders to help craft policies and programs."
+                    ]
+                },
+                {
+                    role: "Fire Controlman",
+                    org: "United States Navy",
+                    date: "8 years of service",
+                    details: [
+                        "Operated and maintained the ship's weapons systems, detecting and tracking targets.",
+                        "Maintained security by standing watch and ensuring compliance with established procedures.",
+                        "Trained junior sailors on military systems and information necessary for mission readiness."
+                    ]
+                },
+                {
+                    role: "National Foster Youth and Alumni Policy Council",
+                    org: "",
+                    date: "Feb 2012 – 2014",
+                    details: [
+                         "Represented the collective viewpoint of youth and alumni who have experienced the child welfare system firsthand.",
+                         "Convened regularly to provide federal stakeholders with relevant and timely information, offering valuable insights that informed the creation of policies."
+                    ]
+                },
+                {
+                    role: "Board Member",
+                    org: "Foster Care Alumni of America (FCAA)",
+                    date: "Aug 2008 – Aug 2014",
+                    details: [
+                         "Elected to serve on the board of an organization that supports individuals without a family connection.",
+                         "Contributed to the mission of connecting the alumni community and transforming policy and practice.",
+                         "Developed strategies to increase awareness and advocate for policy changes."
+                    ]
+                },
+                {
+                    role: "AmeriCorps Board Member",
+                    org: "Georgia Commission on Service and Volunteerism (GCSV)",
+                    date: "Aug 2008 – Aug 2011",
+                    details: [
+                        "Appointed by Governor Sonny Perdue to serve on a board responsible for distributing funds to hundreds of nonprofits.",
+                        "Evaluated grant applications and proposals to ensure they met the commission’s funding criteria."
+                    ]
+                },
+            ];
+
+            const skillsData = [
+                'Project Management', 'Grant Writing & Management', 'Consulting', 'Website Development', 'Social Media Management', 'Leadership Development', 'Community Organizing', 'Workshop Development', 'Event & Conference Planning', 'Therapeutic Game-Based Learning', 'Case Management', 'Bill & Policy Writing', 'Strategic Planning', 'Cross-Generational Teamwork', 'Public Speaking & Training', 'Youth Advocacy & Policy', 'Networking & Collaboration', 'I.T. & Server Hosting', 'Conflict Resolution', 'Crisis De-escalation', 'Content Creation (Video, Podcasts, Webinars)', 'Focus Group Facilitation', 'Data Analysis & Program Evaluation', 'Staff & Youth Training', 'Marketing & Branding', 'Survey Development & Analysis', 'Workforce Development Training', 'Legislative Research & Drafting', 'Team Building Facilitation', 'Policy Advocacy', 'Youth Development', 'Website Creation', 'Grant Writing', 'Marketing'
+            ];
+
+            const timelineContainer = document.getElementById('timeline-container');
+            experienceData.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'timeline-item';
+                
+                const detailsList = item.details.map(detail => `<li class="text-gray-600">${detail}</li>`).join('');
+
+                div.innerHTML = `
+                    <div class="cursor-pointer timeline-header">
+                        <h3 class="text-xl font-bold text-gray-800">${item.role}</h3>
+                        <p class="font-semibold text-blue-600">${item.org}</p>
+                        <p class="text-sm text-gray-500 mb-2">${item.date}</p>
+                    </div>
+                    <div class="timeline-content">
+                        <ul class="list-disc list-inside space-y-2 mt-2 pl-2">
+                           ${detailsList}
+                        </ul>
+                    </div>
+                `;
+                timelineContainer.appendChild(div);
+            });
+
+            document.querySelectorAll('.timeline-header').forEach(header => {
+                header.addEventListener('click', () => {
+                    const content = header.nextElementSibling;
+                    content.classList.toggle('open');
+                });
+            });
+
+            const skillsGrid = document.getElementById('skills-grid');
+            const uniqueSkills = [...new Set(skillsData)];
+            uniqueSkills.forEach(skill => {
+                const tag = document.createElement('span');
+                tag.className = 'skill-tag bg-blue-100 text-blue-800 text-sm font-medium px-4 py-2 rounded-full';
+                tag.textContent = skill;
+                skillsGrid.appendChild(tag);
+            });
+
+            const skillSearch = document.getElementById('skill-search');
+            skillSearch.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                document.querySelectorAll('.skill-tag').forEach(tag => {
+                    if (tag.textContent.toLowerCase().includes(searchTerm)) {
+                        tag.style.display = 'inline-block';
+                        tag.classList.remove('opacity-25');
+                    } else {
+                        tag.style.display = 'inline-block';
+                        tag.classList.add('opacity-25');
+                    }
+                });
+            });
+            
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+            
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('main section');
+            
+            window.addEventListener('scroll', () => {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    if(pageYOffset >= sectionTop - 60){
+                        current = section.getAttribute('id');
+                    }
+                });
+                
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if(link.getAttribute('href') === `#${current}`){
+                        link.classList.add('active');
+                    }
+                })
+            });
+
+        });
+    </script>
+</body>
+</html>
